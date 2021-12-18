@@ -5,7 +5,8 @@ import(
 	"context"
 
 	"github.com/go-hexa/go-balance/internal/core"
-	"github.com/go-hexa/go-balance/internal/handlers/protobuf"
+	
+	proto "github.com/go-hexa/proto-shared/generated/go/balance"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/codes"
@@ -21,7 +22,7 @@ func NewGrpcAdapter(serv core.BalanceServicePort) *GrpcAdapter {
 	}
 }
 
-func (g *GrpcAdapter) AddBalance(ctx context.Context, req *balancepb.AddBalanceRequest) (*balancepb.AddBalanceResponse, error) {
+func (g *GrpcAdapter) AddBalance(ctx context.Context, req *proto.AddBalanceRequest) (*proto.AddBalanceResponse, error) {
 	log.Printf("/AddBalance")
 	log.Printf("Incoming request data : %v", req)
 
@@ -38,13 +39,13 @@ func (g *GrpcAdapter) AddBalance(ctx context.Context, req *balancepb.AddBalanceR
 		return nil, status.Errorf(codes.Internal, "Erro na inclusão do item")
 	}
 
-	res := &balancepb.AddBalanceResponse {
+	res := &proto.AddBalanceResponse {
 		Result: true,
 	}
 	return res, nil
 }
 
-func (g *GrpcAdapter) GetBalance(ctx context.Context, req *balancepb.GetBalanceRequest) (*balancepb.GetBalanceResponse, error) {
+func (g *GrpcAdapter) GetBalance(ctx context.Context, req *proto.GetBalanceRequest) (*proto.GetBalanceResponse, error) {
 	log.Printf("/GetBalance")
 	log.Printf("Incoming request data : %v", req)
 
@@ -54,20 +55,20 @@ func (g *GrpcAdapter) GetBalance(ctx context.Context, req *balancepb.GetBalanceR
 		return nil, status.Errorf(codes.Internal, "Item não encontrado")
 	}
 	
-	_balance :=  &balancepb.Balance{}
+	_balance :=  &proto.Balance{}
 	_balance.Id 		= result.Id
 	_balance.Account 	= result.Account
 	_balance.Amount 	= result.Amount
 	_balance.DateBalance = timestamppb.New(result.DateBalance)
 	_balance.Description = result.Description
 
-	res := &balancepb.GetBalanceResponse {
+	res := &proto.GetBalanceResponse {
 		Balance: _balance,
 	}
 	return res, nil
 }
 
-func (g *GrpcAdapter) ListBalance(ctx context.Context, req *balancepb.ListBalanceRequest) (*balancepb.ListBalanceResponse, error) {
+func (g *GrpcAdapter) ListBalance(ctx context.Context, req *proto.ListBalanceRequest) (*proto.ListBalanceResponse, error) {
 	log.Printf("/ListBalance")
 	log.Printf("Incoming request data : %v", req)
 
@@ -77,9 +78,9 @@ func (g *GrpcAdapter) ListBalance(ctx context.Context, req *balancepb.ListBalanc
 		return nil, status.Errorf(codes.Internal, "Erro na listagem dos itens")
 	}
 
-	var array_balance []*balancepb.Balance
+	var array_balance []*proto.Balance
 	for _, value := range result {
-		_balance :=  &balancepb.Balance{}
+		_balance :=  &proto.Balance{}
 		_balance.Id 		= value.Id
 		_balance.Account 	= value.Account
 		_balance.Amount 	= value.Amount
@@ -89,7 +90,7 @@ func (g *GrpcAdapter) ListBalance(ctx context.Context, req *balancepb.ListBalanc
 		array_balance = append(array_balance, _balance)
 	}
 
-	res := &balancepb.ListBalanceResponse {
+	res := &proto.ListBalanceResponse {
 	 	Balance: array_balance,
 	}
 

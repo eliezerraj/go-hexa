@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/go-hexa/go-balance/internal/handlers/protobuf"
+	proto "github.com/go-hexa/proto-shared/generated/go/balance"
 )
 
 func main(){
@@ -37,7 +37,7 @@ func main(){
 	}
 	defer cc.Close()
 
-	c := balancepb.NewBalanceServiceClient(cc)
+	c := proto.NewBalanceServiceClient(cc)
 
 	ts := timestamppb.Now()
 	fmt.Printf("ts Timestamppb.AsTime() : %s\n", ts.AsTime().String())
@@ -48,14 +48,14 @@ func main(){
 		acc := "acc-" + strconv.Itoa(i)
 		description := "description-"+ strconv.Itoa(i)
 		
-		b := balancepb.Balance{Id: id, 
+		b := proto.Balance{Id: id, 
 			Account: acc, 
 			Amount: 1, 
 			DateBalance: ts, 
 			Description: description,
 		}
 		
-		req := &balancepb.AddBalanceRequest {
+		req := &proto.AddBalanceRequest {
 			Balance: &b,
 		}
 		LoadBalance(c , req ,15 * time.Second)
@@ -76,10 +76,10 @@ func main(){
 
 }
 
-func GetBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
+func GetBalance(c proto.BalanceServiceClient, timeout time.Duration){
 	fmt.Println("GetBalance")
 
-	req := &balancepb.GetBalanceRequest {
+	req := &proto.GetBalanceRequest {
 		Id: "3",
 	}
 
@@ -106,10 +106,10 @@ func GetBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
 	}
 }
 
-func ListBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
+func ListBalance(c proto.BalanceServiceClient, timeout time.Duration){
 	fmt.Println("ListBalance")
 
-	req := &balancepb.ListBalanceRequest {}
+	req := &proto.ListBalanceRequest {}
 
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
@@ -134,11 +134,11 @@ func ListBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
 	}
 }
 
-func AddBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
+func AddBalance(c proto.BalanceServiceClient, timeout time.Duration){
 	fmt.Println("AddBalance")
 
-	req := &balancepb.AddBalanceRequest {
-		Balance: &balancepb.Balance {
+	req := &proto.AddBalanceRequest {
+		Balance: &proto.Balance {
 			Id: "9999",
 			Account: "acc-9999",
 			Amount: 1, 
@@ -170,7 +170,7 @@ func AddBalance(c balancepb.BalanceServiceClient, timeout time.Duration){
 	}
 }
 
-func LoadBalance(c balancepb.BalanceServiceClient, req *balancepb.AddBalanceRequest, timeout time.Duration){
+func LoadBalance(c proto.BalanceServiceClient, req *proto.AddBalanceRequest, timeout time.Duration){
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
 	ctx = metadata.NewOutgoingContext(ctx, header)

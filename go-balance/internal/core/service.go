@@ -14,6 +14,7 @@ type service struct {
 func NewService(repo BalanceRepositoryPort, clie BalanceClientPort) *service {
 	return &service{
 		cliente: clie,
+		repo: repo,
 		ctx: context.Background(),
 	}
 }
@@ -58,12 +59,18 @@ func (p *service) ListBalance() ([]Balance, error) {
 		return nil, err
 	}
 
-	for _, value := range res {
+	for idx, value := range res {
 		rate, err := p.cliente.GetRate(value.Account)
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("rate %v %v \n", value.Account , rate)
+		res[idx].Amount = value.Amount * rate
+		log.Printf("--------------------------------------")
+		log.Printf("- ListBalance Doing Business Rules !!!!")
+		log.Println("")
+		log.Printf("Account ( %v ) com Valor ( %v ) \n", value.Account , res[idx].Amount)
+		log.Println("")
+		log.Printf("--------------------------------------")
 	}
 
 	return res, nil

@@ -7,6 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 	"context"
+	"math/rand"
+	"time"
+	"strings"
 
 	"google.golang.org/grpc"
 
@@ -47,10 +50,20 @@ func main(){
 }
 
 func(*server) GetRateAccount(ctx context.Context, req *proto.RateRequest) (*proto.RateResponse, error) {
+	log.Println("GetRateAccount")
+	log.Printf("Incoming request data : %v", req)
+
+	rand.Seed(time.Now().UnixNano())
+	randon_i := rand.Intn(20)
+	var stringBuilder strings.Builder
 
 	rate := &proto.Rate{}
-	rate.Rate = 12
-	rate.Description = "Taxa do Cliente"
+	rate.Rate = int32(randon_i)
+
+	stringBuilder.WriteString("Taxa da Cliente -- ")
+	stringBuilder.WriteString(req.GetAccount())
+
+	rate.Description = stringBuilder.String()
 
 	res := &proto.RateResponse {
 		Rate: rate,

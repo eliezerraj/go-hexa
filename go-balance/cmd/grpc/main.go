@@ -17,7 +17,7 @@ import (
 
 	"github.com/go-hexa/go-balance/internal/handlers/hdl_grpc"
 	"github.com/go-hexa/go-balance/internal/core"
-	"github.com/go-hexa/go-balance/internal/handlers/protobuf"
+	proto "github.com/go-hexa/proto-shared/generated/go/balance"
 	"github.com/go-hexa/go-balance/internal/adapters/repository"
 	"github.com/go-hexa/go-balance/internal/adapters/client"
 )
@@ -120,7 +120,7 @@ func main() {
 	}
 
 	s := grpc.NewServer(grpc.UnaryInterceptor(authInterceptor))
-	balancepb.RegisterBalanceServiceServer(s, handler)
+	proto.RegisterBalanceServiceServer(s, handler)
 
 	go func(){
 		log.Println("Starting server...")
