@@ -7,8 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 	"context"
+
 	"google.golang.org/grpc"
-	"github.com/proto-shared/generated/go/rate"
+
+	proto "github.com/go-hexa/proto-shared/generated/go/rate"
+
 )
 
 type server struct{}
@@ -23,7 +26,7 @@ func main(){
 	}
 
 	s := grpc.NewServer()
-	RegisterRateServiceServer(s , &server{})
+	proto.RegisterRateServiceServer(s , &server{})
 
 	go func(){
 		log.Println("Starting server...")
@@ -43,13 +46,13 @@ func main(){
 
 }
 
-func(*server) GetRateAccount(ctx context.Context, req *RateRequest) (*RateResponse, error) {
+func(*server) GetRateAccount(ctx context.Context, req *proto.RateRequest) (*proto.RateResponse, error) {
 
-	rate := &Rate{}
+	rate := &proto.Rate{}
 	rate.Rate = 12
 	rate.Description = "Taxa do Cliente"
 
-	res := &RateResponse {
+	res := &proto.RateResponse {
 		Rate: rate,
 	}
 
