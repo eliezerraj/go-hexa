@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-go-hexa-grpc
+  namespace: test-g
+spec:
+  ports:
+  - name: svc-go-hexa-grpc
+    port: 50051
+    targetPort: 50051
+  selector:
+    app: go-hexa-grpc
+  type: LoadBalancer

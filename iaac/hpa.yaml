@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-go-hexa-grpc
+  namespace: test-g
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: go-hexa-grpc
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 70
