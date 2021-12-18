@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/go-hexa/balance/internal/handlers/hdl_grpc"
+	"github.com/go-hexa/go-balance/internal/handlers/hdl_grpc"
 	"github.com/go-hexa/go-balance/internal/core"
 	"github.com/go-hexa/go-balance/internal/handlers/protobuf"
 	"github.com/go-hexa/go-balance/internal/adapters/repository"
