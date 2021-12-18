@@ -14,11 +14,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/snipet-go-hexa/balance/internal/adapters/repository"
 
-	"github.com/go-hexa/balance/internal/core"
-	"github.com/go-hexa/balance/internal/handlers/hdl_http"
-	"github.com/go-hexa/balance/internal/adapters/client"
+	"github.com/go-hexa/go-balance/internal/adapters/repository"
+	"github.com/go-hexa/go-balance/internal/core"
+	"github.com/go-hexa/go-balance/internal/handlers/hdl_http"
+	"github.com/go-hexa/go-balance/internal/adapters/client"
 )
 
 var my_pod core.Pod

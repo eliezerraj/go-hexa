@@ -5,7 +5,7 @@ import(
 	"net/http"
 	"encoding/json"
 
-	"github.com/go-hexa/balance/internal/core"
+	"github.com/go-hexa/go-balance/internal/core"
 )
 
 type HttpAdapter struct {

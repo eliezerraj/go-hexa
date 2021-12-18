@@ -4,8 +4,8 @@ import (
 	"log"
 	"encoding/json"
 
-	"github.com/go-hexa/balance/pkg"
-	"github.com/go-hexa/balance/internal/core"
+	"github.com/go-hexa/go-balance/pkg"
+	"github.com/go-hexa/go-balance/internal/core"
 )
 
 type memkv struct {

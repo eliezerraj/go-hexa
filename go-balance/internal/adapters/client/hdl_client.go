@@ -4,7 +4,7 @@ import(
 	"log"
 //	"context"
 
-	"github.com/go-hexa/balance/internal/core"
+	"github.com/go-hexa/go-balance/internal/core"
 	"google.golang.org/grpc"
 	// "github/snipet-go-hexa/balance/internal/handlers/protobuf"
 	// "google.golang.org/protobuf/types/known/timestamppb"
