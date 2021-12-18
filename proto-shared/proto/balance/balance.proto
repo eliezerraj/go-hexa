@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 package balance;
-option go_package="github.com/proto-shared/generated/go/rate";
+option go_package="github.com/go-hexa/proto-shared/generated/go/rate";
 
 message Balance {
     string accept_language  = 1;
