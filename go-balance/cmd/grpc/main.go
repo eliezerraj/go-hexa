@@ -8,6 +8,7 @@ import (
 	"net"
 	"strconv"
 	"context"
+	//"time"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -92,32 +93,28 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.Printf("Starting gRPC Server 1.0")
 
-	initSetup()
-
 	handler_cliente	:= client.NewGrpcAdapterClient()
 	repo 			:= repository.NewMemKV()
-
 	service 		:= core.NewService(repo, handler_cliente)
-
 	handler			:= hdl_grpc.NewGrpcAdapter(service)
 
 	// ------------------------------------
 	// Load dummy data
-	for i:=0 ; i < 100; i++ {
-		id :=  strconv.Itoa(i)
-		acc := "acc-" + strconv.Itoa(i)
-		description := "description-"+ strconv.Itoa(i)
+	// for i:=0 ; i < 5; i++ {
+	// 	id :=  strconv.Itoa(i)
+	// 	acc := "acc-" + strconv.Itoa(i)
+	// 	description := "description-"+ strconv.Itoa(i)
 
-		b := core.Balance{	Id: id, 
-							Account: acc, 
-							Amount: 1, 
-							DateBalance: time.Now(), 
-							Description: description,
-						}
-		service.AddBalance(b)
-	}
+	// 	b := core.Balance{	Id: id, 
+	// 						Account: acc, 
+	// 						Amount: 1, 
+	// 						DateBalance: time.Now(), 
+	// 						Description: description,
+	// 					}
+	// 	service.AddBalance(b)
+	// }
 	// ------------------------------------
-
+	initSetup()
 	var hostname = my_pod.Host + ":" +  my_pod.Port
 	lis, err := net.Listen("tcp",hostname)
 	if err != nil{
@@ -128,7 +125,7 @@ func main() {
 	proto.RegisterBalanceServiceServer(s, handler)
 
 	go func(){
-		log.Println("Starting server...")
+		log.Println("Start Server...")
 		if err := s.Serve(lis); err != nil {
 			log.Fatalf("Failed to connect server : %v", err)
 		}

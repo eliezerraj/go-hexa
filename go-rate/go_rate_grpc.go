@@ -20,6 +20,9 @@ import (
 
 type server struct{}
 
+//var host = "0.0.0.0:60051" 
+var host = "0.0.0.0:60052" 
+
 func initSetup(){
 	addrs, err := net.InterfaceAddrs()
 
@@ -40,7 +43,7 @@ func initSetup(){
 
 	pid = strconv.Itoa(os.Getpid())
 
-	log.Printf("Setup : PID(%v) IP (%v) \n", pid, ip_adress)
+	log.Printf("Setup : PID(%v) IP (%v) host (%v) \n", pid, ip_adress, host)
 }
 
 func main(){
@@ -48,8 +51,8 @@ func main(){
 	log.Println("Rate gRPC server")
 
 	initSetup()
-	
-	lis, err := net.Listen("tcp","0.0.0.0:60051")
+
+	lis, err := net.Listen("tcp",host)
 	if err != nil{
 		log.Fatalf("Failed to listen %v", err)
 	}

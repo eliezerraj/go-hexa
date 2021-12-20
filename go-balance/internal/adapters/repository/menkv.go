@@ -20,7 +20,7 @@ func (repo *memkv) ListBalance() ([]core.Balance, error) {
 	log.Printf("ListBalance")
 
 	log.Printf("####################################")
-	log.Printf("- ListBalance DataBase Access !!!!")
+	log.Printf("- DataBase - ListBalance DataBase !!!!")
 	log.Printf("####################################")
 
 	var res []core.Balance
@@ -39,7 +39,7 @@ func (repo *memkv) GetBalance(account string) (core.Balance, error) {
 	log.Printf("GetBalance")
 
 	log.Printf("####################################")
-	log.Printf("- GetBalance DataBase Access !!!!")
+	log.Printf("- DataBase - GetBalance DataBase !!!!")
 	log.Printf("####################################")
 
 	if value, ok := repo.kv[account]; ok {
@@ -57,7 +57,7 @@ func (repo *memkv) AddBalance(balance core.Balance) error {
 	log.Printf("repo-AddBalance")
 
 	log.Printf("####################################")
-	log.Printf("- GetBalance DataBase Access !!!!")
+	log.Printf("- DataBase - AddBalance Data !!!!")
 	log.Printf("####################################")
 
 	bytes, err := json.Marshal(balance)

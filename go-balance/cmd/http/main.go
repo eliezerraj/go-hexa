@@ -78,7 +78,8 @@ func main() {
 	
 	//------------------------------------
 	//Load dummy data
-	for i:=0 ; i < 100; i++ {
+	// log.Println(" ### Loading Dummy Data")
+	for i:=0 ; i < 5; i++ {
 		id :=  strconv.Itoa(i)
 		acc := "acc-" + strconv.Itoa(i)
 		description := "description-"+ strconv.Itoa(i)
@@ -91,6 +92,7 @@ func main() {
 						}
 		service.AddBalance(b)
 	}
+	// log.Println(" ### Finished Dummy Data")
 	//------------------------------------
 	
 	handleRequests(handler)
