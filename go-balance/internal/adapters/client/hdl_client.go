@@ -29,10 +29,17 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 	log.Printf("- GetRate Calling another Service !!!!")
 	log.Printf("--------------------------------------")
 
-	var host = "127.0.0.1:60051" 
-	cc, err := grpc.Dial(host,grpc.WithInsecure())
+	var opts []grpc.DialOption
+	opts = append(opts,grpc.FailOnNonTempDialError(true))
+	opts = append(opts, grpc.WithInsecure())
+    opts = append(opts, grpc.WithBlock())
+
+	var host = "svc-go-rate-grpc:60051" 
+	cc, err := grpc.Dial(host, opts... )
+
 	if err != nil{
-		log.Fatalf("Failed to connect %v", err)
+		log.Printf("Failed to connect : %v", err)
+		return 1, err
 	}
 	defer cc.Close()
 
@@ -42,8 +49,7 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 		Account: account,
 	}
 
-	timeout := 15 * time.Second
-
+	timeout := 3 * time.Second
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
 	ctx = metadata.NewOutgoingContext(ctx, header)

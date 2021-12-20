@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"time"
 	"strings"
+	"strconv"
 
 	"google.golang.org/grpc"
 
@@ -19,10 +20,35 @@ import (
 
 type server struct{}
 
+func initSetup(){
+	addrs, err := net.InterfaceAddrs()
+
+	var pid = ""
+	var ip_adress = ""
+
+	if err != nil {
+		log.Println("Erro Fatal")
+		panic(err)
+	}
+	for _, a := range addrs {
+		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				ip_adress = ipnet.IP.String()
+			}
+		}
+	}
+
+	pid = strconv.Itoa(os.Getpid())
+
+	log.Printf("Setup : PID(%v) IP (%v) \n", pid, ip_adress)
+}
+
 func main(){
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.Println("Rate gRPC server")
 
+	initSetup()
+	
 	lis, err := net.Listen("tcp","0.0.0.0:60051")
 	if err != nil{
 		log.Fatalf("Failed to listen %v", err)
@@ -54,7 +80,7 @@ func(*server) GetRateAccount(ctx context.Context, req *proto.RateRequest) (*prot
 	log.Printf("Incoming request data : %v", req)
 
 	rand.Seed(time.Now().UnixNano())
-	randon_i := rand.Intn(20)
+	randon_i := rand.Intn(30)
 	var stringBuilder strings.Builder
 
 	rate := &proto.Rate{}

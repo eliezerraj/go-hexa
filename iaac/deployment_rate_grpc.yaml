@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-hexa-grpc
+  name: go-rate-grpc
   namespace: test-g
 spec:
   replicas: 1
@@ -9,17 +9,17 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: go-hexa-grpc
+      app: go-rate-grpc
   template:
     metadata:
       labels:
-        app: go-hexa-grpc
-        version: "go-hexa-grpc"
+        app: go-rate-grpc
+        version: "go-rate-grpc"
     spec:
       containers:
-      - name: go-hexa-grpc
+      - name: go-rate-grpc
         imagePullPolicy: Never
-        image: go_hexa_grpc
+        image: go_rate_grpc
         resources:
            requests:
              cpu: 250m
@@ -31,7 +31,7 @@ spec:
         - containerPort: 50051
         env:
         - name: PORT
-          value: "50051"
+          value: "60051"
         - name: NAME_POD
-          value: "pod-go-hexa-grpc"
+          value: "pod-go-rate-grpc"
       terminationGracePeriodSeconds: 60

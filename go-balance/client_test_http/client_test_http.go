@@ -8,17 +8,31 @@ import (
    "strconv"
    "bytes"
    "encoding/json"
+   "flag"
+   "os"
 
    "github.com/go-hexa/go-balance/internal/core"
 )
 
 func main() {
 
+	port := flag.String("port","","")
+	flag.Parse()
+	flag.VisitAll(func (f *flag.Flag) {
+		if f.Value.String()=="" {
+			log.Printf("A flag -%v não foi informado \n", f.Name )
+			os.Exit(1)
+		}
+	})
+
+	var host = "127.0.0.1:" + *port
+	host_url := "http://" + host + "/add_balance"
+	
 	client := http.Client{}
 
 	//---------------------------------------------------
 	log.Println("start LoadBalance data")
-	for i:=0; i < 500; i++ {
+	for i:=0; i < 100; i++ {
 
 		acc := "acc-" + strconv.Itoa(i)
 		description := "description-"+ strconv.Itoa(i)
@@ -33,10 +47,12 @@ func main() {
 		payload := new(bytes.Buffer)
 		json.NewEncoder(payload).Encode(balance)
 
-		req_post , err := http.NewRequest("POST", "http://localhost:8901/add_balance", payload)
+		req_post , err := http.NewRequest("POST", host_url, payload)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println("Error http.NewRequest : ", err)
+			panic(err)
 		}
+
 		req_post.Header = http.Header{
 			"Accept_Language": []string{"pt-BR"},
 			"Authorization": []string{"Bearer cookie"},
@@ -45,16 +61,20 @@ func main() {
 
 		_, err = client.Do(req_post)
 		if err != nil {
-		   log.Fatalln(err)
+		   log.Println("Error doing POST : ", err)
+		   panic(err)
 		}
 	}
 	log.Println("end LoadBalance data")
 	//---------------------------------------------------
 
 	log.Println("-----------------------------")
-	req_get , err := http.NewRequest("GET", "http://localhost:8901/list_balance", nil)
+	host_url = "http://" + host + "/list_balance"
+
+	req_get , err := http.NewRequest("GET", host_url, nil)
 	if err != nil {
-    	log.Fatalln(err)
+		log.Println("Error http.NewRequest : ", err)
+		panic(err)
 	}
 	req_get.Header = http.Header{
 		"Accept_Language": []string{"pt-BR"},
@@ -66,13 +86,15 @@ func main() {
 		defer resp.Body.Close()
 
 		if err != nil {
-		   log.Fatalln(err)
+			log.Println("Error doing GET : ", err)
+			panic(err)
 		}
 	
 		body, err := ioutil.ReadAll(resp.Body)
-	
+
 		if err != nil {
-		   log.Fatalln(err)
+			log.Println("Error : ", err)
+			panic(err)
 		}
 
 		sb := string(body)

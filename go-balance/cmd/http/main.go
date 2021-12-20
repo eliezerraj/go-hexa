@@ -78,15 +78,19 @@ func main() {
 	
 	//------------------------------------
 	//Load dummy data
-	// for i:=0 ; i < 500; i++ {
+	for i:=0 ; i < 100; i++ {
+		id :=  strconv.Itoa(i)
+		acc := "acc-" + strconv.Itoa(i)
+		description := "description-"+ strconv.Itoa(i)
 
-	// 	id :=  strconv.Itoa(i)
-	// 	acc := "acc-" + strconv.Itoa(i)
-	// 	description := "description-"+ strconv.Itoa(i)
-
-	// 	b := core.Balance{Id: id, Account: acc, Amount: 1, DateBalance: time.Now(), Description: description}
-	// 	service.AddBalance(b)
-	// }
+		b := core.Balance{	Id: id, 
+							Account: acc, 
+							Amount: 1, 
+							DateBalance: time.Now(), 
+							Description: description,
+						}
+		service.AddBalance(b)
+	}
 	//------------------------------------
 	
 	handleRequests(handler)

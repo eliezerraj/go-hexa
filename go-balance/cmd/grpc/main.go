@@ -37,7 +37,7 @@ func initSetup(){
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		log.Println("Erro Fatal")
-		os.Exit(1)
+		panic(err)
 	}
 	for _, a := range addrs {
 		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
@@ -103,14 +103,19 @@ func main() {
 
 	// ------------------------------------
 	// Load dummy data
-	// for i:=0 ; i < 500; i++ {
-	// 	id :=  strconv.Itoa(i)
-	// 	acc := "acc-" + strconv.Itoa(i)
-	// 	description := "description-"+ strconv.Itoa(i)
+	for i:=0 ; i < 100; i++ {
+		id :=  strconv.Itoa(i)
+		acc := "acc-" + strconv.Itoa(i)
+		description := "description-"+ strconv.Itoa(i)
 
-	// 	b := core.Balance{Id: id, Account: acc, Amount: 1, DateBalance: time.Now(), Description: description}
-	// 	service.AddBalance(b)
-	// }
+		b := core.Balance{	Id: id, 
+							Account: acc, 
+							Amount: 1, 
+							DateBalance: time.Now(), 
+							Description: description,
+						}
+		service.AddBalance(b)
+	}
 	// ------------------------------------
 
 	var hostname = my_pod.Host + ":" +  my_pod.Port

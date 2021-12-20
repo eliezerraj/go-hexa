@@ -30,10 +30,17 @@ func main(){
 		}
 	})
 
-	var host = "127.0.0.1:" + *port
-	cc, err := grpc.Dial(host,grpc.WithInsecure())
+	var host = "0.0.0.0:" + *port
+
+	var opts []grpc.DialOption
+	opts = append(opts,grpc.FailOnNonTempDialError(true))
+	opts = append(opts, grpc.WithInsecure())
+    opts = append(opts, grpc.WithBlock())
+
+	cc, err := grpc.Dial(host, opts...)
 	if err != nil{
-		log.Fatalf("Failed to connect %v", err)
+		log.Fatalf(" **** Failed to connect %v", err)
+		panic(err)
 	}
 	defer cc.Close()
 
@@ -42,7 +49,8 @@ func main(){
 	ts := timestamppb.Now()
 	fmt.Printf("ts Timestamppb.AsTime() : %s\n", ts.AsTime().String())
 	fmt.Println("start LoadBalance data")
-	for i:=0 ; i < 500; i++ {
+	
+	for i:=0 ; i < 100; i++ {
 
 		id :=  strconv.Itoa(i)
 		acc := "acc-" + strconv.Itoa(i)
@@ -63,14 +71,14 @@ func main(){
 	fmt.Println("end LoadBalance data")
 
 	fmt.Println("-----------------------------")
-	GetBalance(c , 15 * time.Second)
+	GetBalance(c , 3 * time.Second)
 	fmt.Println("-----------------------------")
-	ListBalance(c , 15 * time.Second)
+	ListBalance(c , 3 * time.Second)
 	fmt.Println("-----------------------------")
 	//AddBalance(c , 15 * time.Second)
 
 	for i:=0; i < 3600; i++ {
-		ListBalance(c , 15 * time.Second)
+		ListBalance(c , 3 * time.Second)
 		time.Sleep(time.Second * time.Duration(1))
 	}
 
@@ -112,6 +120,7 @@ func ListBalance(c proto.BalanceServiceClient, timeout time.Duration){
 	req := &proto.ListBalanceRequest {}
 
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
 	ctx = metadata.NewOutgoingContext(ctx, header)
 	defer cancel()
