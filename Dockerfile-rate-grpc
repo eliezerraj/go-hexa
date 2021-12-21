@@ -1,4 +1,5 @@
-# docker build -t go_rate_grpc . -f Dockerfile-rate-grpc
+# docker network create --driver bridge go_hexa_net
+# docker build -t go_rate_grpc . -f dockerfile-rate-grpc
 # docker run -dit --network go_hexa_net --name go_rate_grpc -p 60051:60051 go_rate_grpc
 
 FROM golang:1.17 As builder

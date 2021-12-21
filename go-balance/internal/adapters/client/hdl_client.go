@@ -34,8 +34,8 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 	opts = append(opts, grpc.WithInsecure())
     opts = append(opts, grpc.WithBlock())
 
-	//var host = "svc-go-rate-grpc:60051" 
-	var host = "0.0.0.0:60052" // local
+	var host = "svc-go-rate-grpc:60051" 
+	//var host = "0.0.0.0:60052" // local
 	cc, err := grpc.Dial(host, opts... )
 
 	if err != nil{

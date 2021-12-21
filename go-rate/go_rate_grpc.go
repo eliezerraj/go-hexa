@@ -20,8 +20,8 @@ import (
 
 type server struct{}
 
-//var host = "0.0.0.0:60051" 
-var host = "0.0.0.0:60052" 
+var host = "0.0.0.0:60051" 
+//var host = "0.0.0.0:60052" 
 
 func initSetup(){
 	addrs, err := net.InterfaceAddrs()

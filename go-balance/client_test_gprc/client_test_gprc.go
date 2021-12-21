@@ -67,29 +67,32 @@ func main(){
 func get(c proto.BalanceServiceClient, done chan string){
 	for i:=0; i < 3600; i++ {
 		ListBalance(c , 3 * time.Second)
-		time.Sleep(time.Second * time.Duration(5))
+		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
 	done <- "END"
 }	
 
 func post(c proto.BalanceServiceClient, done chan string){
-	for i:=0; i < 25; i++ {
-		id :=  strconv.Itoa(i)
-		acc := "acc-" + strconv.Itoa(i)
-		description := "description-"+ strconv.Itoa(i)
-		ts := timestamppb.Now()
-		//fmt.Printf("ts Timestamppb.AsTime() : %s\n", ts.AsTime().String())
-		b := proto.Balance{Id: id, 
-			Account: acc, 
-			Amount: 1, 
-			DateBalance: ts, 
-			Description: description,
+	
+	for a:=0; a < 3600; a++ {
+		for i:=0; i < 50; i++ {
+			id :=  strconv.Itoa(i)
+			acc := "acc-" + strconv.Itoa(i)
+			description := "description-"+ strconv.Itoa(i) + " - UPDATED"
+			ts := timestamppb.Now()
+			//fmt.Printf("ts Timestamppb.AsTime() : %s\n", ts.AsTime().String())
+			b := proto.Balance{Id: id, 
+				Account: acc, 
+				Amount: 1, 
+				DateBalance: ts, 
+				Description: description,
+			}
+			req := &proto.AddBalanceRequest {
+				Balance: &b,
+			}
+			AddBalance(c , req , 3 * time.Second)
 		}
-		req := &proto.AddBalanceRequest {
-			Balance: &b,
-		}
-		AddBalance(c , req , 3 * time.Second)
-		time.Sleep(time.Second * time.Duration(1))
+		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
 	done <- "END"
 }

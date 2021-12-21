@@ -8,7 +8,7 @@ import (
 	"net"
 	"strconv"
 	"context"
-	//"time"
+	"time"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -100,19 +100,19 @@ func main() {
 
 	// ------------------------------------
 	// Load dummy data
-	// for i:=0 ; i < 5; i++ {
-	// 	id :=  strconv.Itoa(i)
-	// 	acc := "acc-" + strconv.Itoa(i)
-	// 	description := "description-"+ strconv.Itoa(i)
+	for i:=0 ; i < 50; i++ {
+		id :=  strconv.Itoa(i)
+		acc := "acc-" + strconv.Itoa(i)
+		description := "description-"+ strconv.Itoa(i)
 
-	// 	b := core.Balance{	Id: id, 
-	// 						Account: acc, 
-	// 						Amount: 1, 
-	// 						DateBalance: time.Now(), 
-	// 						Description: description,
-	// 					}
-	// 	service.AddBalance(b)
-	// }
+		b := core.Balance{	Id: id, 
+							Account: acc, 
+							Amount: 1, 
+							DateBalance: time.Now(), 
+							Description: description,
+						}
+		service.AddBalance(b)
+	}
 	// ------------------------------------
 	initSetup()
 	var hostname = my_pod.Host + ":" +  my_pod.Port

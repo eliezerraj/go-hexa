@@ -45,22 +45,60 @@ func main() {
 	log.Println(<-done)
 }
 
-func post(host string, client http.Client, done chan string){
-	for i:=0; i < 5; i++ {
-		host_url := "http://" + host + "/add_balance"
-		post_data(i, host_url, client)
-		time.Sleep(time.Second * time.Duration(1))
+func get(host string, client http.Client, done chan string){
+	for i:=0; i < 3600; i++ {
+		host_url := "http://" + host + "/list_balance"
+		get_data(host_url, client)
+		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
 	done <- "END"
 }
 
-func get(host string, client http.Client, done chan string){
-	for i:=0; i < 5; i++ {
-		host_url := "http://" + host + "/list_balance"
-		get_data(host_url, client)
-		time.Sleep(time.Second * time.Duration(1))
+func post(host string, client http.Client, done chan string){
+	for a:=0; a < 3600; a++ {
+		for i:=0; i < 50; i++ {
+			host_url := "http://" + host + "/add_balance"
+			post_data(i, host_url, client)
+		}
+		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
 	done <- "END"
+}
+
+func get_data(host_url string, client http.Client){
+	log.Println("GET DATA.....")
+	
+	req_get , err := http.NewRequest("GET", host_url, nil)
+	if err != nil {
+		log.Println("Error http.NewRequest : ", err)
+		panic(err)
+	}
+
+	req_get.Header = http.Header{
+		"Accept_Language": []string{"pt-BR"},
+		"Authorization": []string{"Bearer cookie"},
+	}
+
+	req_get.Close = true
+	resp, err := client.Do(req_get)
+	//defer resp.Body.Close()
+	if err != nil {
+		log.Println("Error doing GET : ", err)
+		panic(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Println("Error : ", err)
+		panic(err)
+	}
+
+	sb := string(body)
+	log.Printf(sb)
+
+	resp.Body.Close();
+	log.Println("###########")
 }
 
 func post_data(i int ,host string, client http.Client){
@@ -90,41 +128,12 @@ func post_data(i int ,host string, client http.Client){
 		"Content-Type": []string{"application/json"},
 	}
 
-	_, err = client.Do(req_post)
+	resp, err := client.Do(req_post)
 	if err != nil {
 	   log.Println("Error doing POST : ", err)
 	   panic(err)
 	}
+
+	resp.Body.Close();
 }
 
-func get_data(host_url string, client http.Client){
-	log.Println("GET DATA.....")
-	req_get , err := http.NewRequest("GET", host_url, nil)
-	if err != nil {
-		log.Println("Error http.NewRequest : ", err)
-		panic(err)
-	}
-	req_get.Header = http.Header{
-		"Accept_Language": []string{"pt-BR"},
-		"Authorization": []string{"Bearer cookie"},
-	}
-
-	resp, err := client.Do(req_get)
-	defer resp.Body.Close()
-
-	if err != nil {
-		log.Println("Error doing GET : ", err)
-		panic(err)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Println("Error : ", err)
-		panic(err)
-	}
-
-	sb := string(body)
-	log.Printf(sb)
-	log.Println("###########")
-}

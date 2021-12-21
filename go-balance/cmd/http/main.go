@@ -79,7 +79,7 @@ func main() {
 	//------------------------------------
 	//Load dummy data
 	// log.Println(" ### Loading Dummy Data")
-	for i:=0 ; i < 5; i++ {
+	for i:=0 ; i < 50; i++ {
 		id :=  strconv.Itoa(i)
 		acc := "acc-" + strconv.Itoa(i)
 		description := "description-"+ strconv.Itoa(i)

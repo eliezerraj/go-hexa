@@ -1,4 +1,5 @@
-# docker build -t go_balance_http . -f Dockerfile-balance-http
+# docker network create --driver bridge go_hexa_net
+# docker build -t go_balance_http . -f dockerfile-balance-http
 # docker run -dit --network go_hexa_net --name go_balance_http -p 8900:8900 go_balance_http
 
 FROM golang:1.17 As builder
