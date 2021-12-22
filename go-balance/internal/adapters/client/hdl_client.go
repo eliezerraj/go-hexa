@@ -29,14 +29,15 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 	log.Printf("- GetRate Calling another Service !!!!")
 	log.Printf("--------------------------------------")
 
+	//var host = "svc-go-rate-grpc:60051" 
+	var host = "0.0.0.0:60051" // local
+
 	var opts []grpc.DialOption
 	opts = append(opts,grpc.FailOnNonTempDialError(true))
 	opts = append(opts, grpc.WithInsecure())
     opts = append(opts, grpc.WithBlock())
 
-	var host = "svc-go-rate-grpc:60051" 
-	//var host = "0.0.0.0:60052" // local
-	cc, err := grpc.Dial(host, opts... )
+	cc, err := grpc.Dial(host, opts...)
 
 	if err != nil{
 		log.Printf("Failed to connect : %v", err)

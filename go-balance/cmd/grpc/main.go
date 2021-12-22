@@ -15,7 +15,9 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/keepalive"
 
+	"github.com/go-hexa/go-balance/dummy_data"
 	"github.com/go-hexa/go-balance/internal/handlers/hdl_grpc"
 	"github.com/go-hexa/go-balance/internal/core"
 	proto "github.com/go-hexa/proto-shared/generated/go/balance"
@@ -101,27 +103,23 @@ func main() {
 	// ------------------------------------
 	// Load dummy data
 	for i:=0 ; i < 50; i++ {
-		id :=  strconv.Itoa(i)
-		acc := "acc-" + strconv.Itoa(i)
-		description := "description-"+ strconv.Itoa(i)
-
-		b := core.Balance{	Id: id, 
-							Account: acc, 
-							Amount: 1, 
-							DateBalance: time.Now(), 
-							Description: description,
-						}
+		b := dummy_data.NewBalance(i)
 		service.AddBalance(b)
 	}
 	// ------------------------------------
 	initSetup()
+
 	var hostname = my_pod.Host + ":" +  my_pod.Port
 	lis, err := net.Listen("tcp",hostname)
 	if err != nil{
 		log.Fatalf("Failed to connect listener : %v", err)
 	}
 
-	s := grpc.NewServer(grpc.UnaryInterceptor(authInterceptor))
+	var opts []grpc.ServerOption
+	opts = append(opts, grpc.UnaryInterceptor(authInterceptor))
+ 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * 1}))
+
+	s := grpc.NewServer(opts...)
 	proto.RegisterBalanceServiceServer(s, handler)
 
 	go func(){

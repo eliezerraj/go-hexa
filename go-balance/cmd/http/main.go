@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 
+	"github.com/go-hexa/go-balance/dummy_data"
 	"github.com/go-hexa/go-balance/internal/adapters/repository"
 	"github.com/go-hexa/go-balance/internal/core"
 	"github.com/go-hexa/go-balance/internal/handlers/hdl_http"
@@ -78,21 +79,10 @@ func main() {
 	
 	//------------------------------------
 	//Load dummy data
-	// log.Println(" ### Loading Dummy Data")
 	for i:=0 ; i < 50; i++ {
-		id :=  strconv.Itoa(i)
-		acc := "acc-" + strconv.Itoa(i)
-		description := "description-"+ strconv.Itoa(i)
-
-		b := core.Balance{	Id: id, 
-							Account: acc, 
-							Amount: 1, 
-							DateBalance: time.Now(), 
-							Description: description,
-						}
+		b := dummy_data.NewBalance(i)
 		service.AddBalance(b)
 	}
-	// log.Println(" ### Finished Dummy Data")
 	//------------------------------------
 	
 	handleRequests(handler)

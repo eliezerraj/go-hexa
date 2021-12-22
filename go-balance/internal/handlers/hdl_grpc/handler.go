@@ -36,7 +36,7 @@ func (g *GrpcAdapter) AddBalance(ctx context.Context, req *proto.AddBalanceReque
 	err := g.service.AddBalance(_balance)
 	if err != nil{
 		log.Print(err)
-		return nil, status.Errorf(codes.Internal, "Erro na inclusão do item")
+		return nil, status.Errorf(codes.InvalidArgument, "Erro na inclusão do item")
 	}
 
 	res := &proto.AddBalanceResponse {
@@ -52,7 +52,7 @@ func (g *GrpcAdapter) GetBalance(ctx context.Context, req *proto.GetBalanceReque
 	result, err := g.service.GetBalance(req.GetId())
 	if err != nil{
 		log.Print(err)
-		return nil, status.Errorf(codes.Internal, "Item não encontrado")
+		return nil, status.Errorf(codes.InvalidArgument, "Item não encontrado")
 	}
 	
 	_balance :=  &proto.Balance{}
@@ -75,7 +75,7 @@ func (g *GrpcAdapter) ListBalance(ctx context.Context, req *proto.ListBalanceReq
 	result, err := g.service.ListBalance()
 	if err != nil{
 		log.Print(err)
-		return nil, status.Errorf(codes.Internal, "Erro na listagem dos itens")
+		return nil, status.Errorf(codes.InvalidArgument, "Erro na listagem dos itens")
 	}
 
 	var array_balance []*proto.Balance

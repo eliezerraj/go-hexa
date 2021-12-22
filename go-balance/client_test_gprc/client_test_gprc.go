@@ -6,15 +6,16 @@ import (
 	"context"
 	"time"
 	"flag"
-	"strconv"
 	"os"
 
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/grpc/backoff"
 
+	"github.com/go-hexa/go-balance/pkg"
+	"github.com/go-hexa/go-balance/dummy_data"
 	proto "github.com/go-hexa/proto-shared/generated/go/balance"
 )
 
@@ -31,15 +32,23 @@ func main(){
 	})
 
 	var host = "0.0.0.0:" + *port
+	
+	var DefaultConfig =backoff. Config{
+		BaseDelay:  1.0 * time.Second,
+		Multiplier: 1.6,
+		MaxDelay:   120 * time.Second,
+	}
 
 	var opts []grpc.DialOption
-	opts = append(opts,grpc.FailOnNonTempDialError(true))
+	opts = append(opts, grpc.FailOnNonTempDialError(true))
 	opts = append(opts, grpc.WithInsecure())
     opts = append(opts, grpc.WithBlock())
+	opts = append(opts, grpc.WithConnectParams(grpc.ConnectParams{
+    											Backoff: DefaultConfig, })) 
 
 	cc, err := grpc.Dial(host, opts...)
 	if err != nil{
-		log.Fatalf(" **** Failed to connect %v", err)
+		log.Printf(" **** Failed to connect %v", err)
 		panic(err)
 	}
 	defer cc.Close()
@@ -61,7 +70,6 @@ func main(){
 	log.Println("-----------------------------")
 
 	log.Println(<-done)
-	
 }
 
 func get(c proto.BalanceServiceClient, done chan string){
@@ -73,20 +81,9 @@ func get(c proto.BalanceServiceClient, done chan string){
 }	
 
 func post(c proto.BalanceServiceClient, done chan string){
-	
 	for a:=0; a < 3600; a++ {
 		for i:=0; i < 50; i++ {
-			id :=  strconv.Itoa(i)
-			acc := "acc-" + strconv.Itoa(i)
-			description := "description-"+ strconv.Itoa(i) + " - UPDATED"
-			ts := timestamppb.Now()
-			//fmt.Printf("ts Timestamppb.AsTime() : %s\n", ts.AsTime().String())
-			b := proto.Balance{Id: id, 
-				Account: acc, 
-				Amount: 1, 
-				DateBalance: ts, 
-				Description: description,
-			}
+			b := dummy_data.NewBalancePB(i)
 			req := &proto.AddBalanceRequest {
 				Balance: &b,
 			}
@@ -122,7 +119,12 @@ func GetBalance(c proto.BalanceServiceClient, timeout time.Duration){
 			log.Printf("Error to call PRC : %v", err)
 		}
 	} else {
-		fmt.Println(res)
+		result, err := pkg.ProtoToJSON(res)
+		if err != nil {
+			log.Printf(" **** Failed to connect %v", err)
+			panic(err)
+		}
+		fmt.Println(result)
 		//fmt.Printf("Timestamppb.AsTime() : %s\n", res.Balance.DateBalance.AsTime().String())
 	}
 }
@@ -151,7 +153,12 @@ func ListBalance(c proto.BalanceServiceClient, timeout time.Duration){
 			log.Printf("Error to call PRC : %v", err)
 		}
 	} else {
-		fmt.Println(res)
+		result, err := pkg.ProtoToJSON(res)
+		if err != nil {
+			log.Printf(" **** Failed to connect %v", err)
+			panic(err)
+		}
+		fmt.Println(result)
 		//fmt.Printf("Timestamppb.AsTime() : %s\n", res.Balance.DateBalance.AsTime().String())
 	}
 }

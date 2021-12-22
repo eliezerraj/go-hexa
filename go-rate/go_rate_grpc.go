@@ -13,6 +13,7 @@ import (
 	"strconv"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 
 	proto "github.com/go-hexa/proto-shared/generated/go/rate"
 
@@ -57,7 +58,10 @@ func main(){
 		log.Fatalf("Failed to listen %v", err)
 	}
 
-	s := grpc.NewServer()
+	var opts []grpc.ServerOption
+ 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * 1}))
+
+	s := grpc.NewServer(opts...)
 	proto.RegisterRateServiceServer(s , &server{})
 
 	go func(){
@@ -75,7 +79,6 @@ func main(){
 	log.Println("Stopping listener")
 	lis.Close()
 	log.Println("Stopped Done !!!")
-
 }
 
 func(*server) GetRateAccount(ctx context.Context, req *proto.RateRequest) (*proto.RateResponse, error) {

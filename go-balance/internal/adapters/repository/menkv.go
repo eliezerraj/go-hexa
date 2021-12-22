@@ -28,7 +28,8 @@ func (repo *memkv) ListBalance() ([]core.Balance, error) {
 		balance := core.Balance{}
 		err := json.Unmarshal(value, &balance)
 		if err != nil {
-			log.Print(err)
+			log.Printf("Erro : %v \n ", err)
+			return nil, pkg.ErrUnmarshal
 		}
 		res = append(res, balance)
 	}
@@ -46,11 +47,12 @@ func (repo *memkv) GetBalance(account string) (core.Balance, error) {
 		balance := core.Balance{}
 		err := json.Unmarshal(value, &balance)
 		if err != nil {
-			return core.Balance{}, err
+			log.Printf("Erro : %v \n ", err)
+			return core.Balance{}, pkg.ErrUnmarshal
 		}
 		return balance, nil
 	}
-	return core.Balance{}, pkg.NotFound
+	return core.Balance{}, pkg.ErrNotFound
 }
 
 func (repo *memkv) AddBalance(balance core.Balance) error {
@@ -62,7 +64,8 @@ func (repo *memkv) AddBalance(balance core.Balance) error {
 
 	bytes, err := json.Marshal(balance)
 	if err != nil {
-		return err
+		log.Printf("Erro : %v \n ", err)
+		return pkg.ErrInsert
 	}
 	repo.kv[balance.Id] = bytes
 	return nil

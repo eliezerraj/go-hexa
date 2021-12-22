@@ -3,6 +3,8 @@ package core
 import (
 	"log"
 	"context"
+
+	"github.com/go-hexa/go-balance/pkg"
 )
 
 type service struct {
@@ -62,7 +64,7 @@ func (p *service) ListBalance() ([]Balance, error) {
 	for idx, value := range res {
 		rate, err := p.cliente.GetRate(value.Account)
 		if err != nil {
-			return nil, err
+			return nil, pkg.ErrGetRate
 		}
 		res[idx].Amount = value.Amount * rate
 		log.Printf("--------------------------------------")

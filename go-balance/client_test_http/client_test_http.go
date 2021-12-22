@@ -5,13 +5,12 @@ import (
    "log"
    "net/http"
    "time"
-   "strconv"
    "bytes"
    "encoding/json"
    "flag"
    "os"
 
-   "github.com/go-hexa/go-balance/internal/core"
+   "github.com/go-hexa/go-balance/dummy_data"
 )
 
 func main() {
@@ -103,16 +102,8 @@ func get_data(host_url string, client http.Client){
 
 func post_data(i int ,host string, client http.Client){
 	log.Println("POST DATA.....")
-	acc := "acc-" + strconv.Itoa(i)
-	description := "description-"+ strconv.Itoa(i) + " - UPDATED"
-	balance := &core.Balance{
-		Id:    strconv.Itoa(i),
-		Account: acc,
-		Amount: 1,
-		DateBalance: time.Now(),
-		Description: description,
-	}
 
+	balance := dummy_data.NewBalance(i)
 	payload := new(bytes.Buffer)
 	json.NewEncoder(payload).Encode(balance)
 
