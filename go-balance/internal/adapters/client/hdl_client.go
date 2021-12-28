@@ -14,6 +14,10 @@ import(
 	"google.golang.org/grpc/codes"
 )
 
+const val_timeout = 3
+//const host =  "svc-go-rate-grpc:60051" 
+const host = "0.0.0.0:60051" //uso local
+
 type GrpcAdapterClient struct {
 	cliente core.BalanceClientPort
 }
@@ -28,9 +32,6 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 	log.Printf("--------------------------------------")
 	log.Printf("- GetRate Calling another Service !!!!")
 	log.Printf("--------------------------------------")
-
-	//var host = "svc-go-rate-grpc:60051" 
-	var host = "0.0.0.0:60051" // local
 
 	var opts []grpc.DialOption
 	opts = append(opts,grpc.FailOnNonTempDialError(true))
@@ -51,7 +52,7 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
 		Account: account,
 	}
 
-	timeout := 3 * time.Second
+	timeout := val_timeout * time.Second
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
 	ctx = metadata.NewOutgoingContext(ctx, header)

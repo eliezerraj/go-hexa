@@ -28,6 +28,8 @@ import (
 var my_pod core.Pod
 var my_setup core.Setup 
 
+const maxConnectionAge = 1
+
 func getEnvVariable(key string) string {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -117,7 +119,7 @@ func main() {
 
 	var opts []grpc.ServerOption
 	opts = append(opts, grpc.UnaryInterceptor(authInterceptor))
- 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * 1}))
+ 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * maxConnectionAge}))
 
 	s := grpc.NewServer(opts...)
 	proto.RegisterBalanceServiceServer(s, handler)

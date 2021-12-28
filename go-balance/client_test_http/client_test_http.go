@@ -80,7 +80,6 @@ func get_data(host_url string, client http.Client){
 
 	req_get.Close = true
 	resp, err := client.Do(req_get)
-	//defer resp.Body.Close()
 	if err != nil {
 		log.Println("Error doing GET : ", err)
 		panic(err)
@@ -96,7 +95,13 @@ func get_data(host_url string, client http.Client){
 	sb := string(body)
 	log.Printf(sb)
 
-	resp.Body.Close();
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Println("Erro Close :",err)
+		}
+	}()
+
 	log.Println("###########")
 }
 
@@ -125,6 +130,11 @@ func post_data(i int ,host string, client http.Client){
 	   panic(err)
 	}
 
-	resp.Body.Close();
-}
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Println("Erro Close :",err)
+		}
+	}()
 
+}

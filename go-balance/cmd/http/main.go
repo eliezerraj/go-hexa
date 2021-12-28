@@ -25,6 +25,11 @@ import (
 var my_pod core.Pod
 var my_setup core.Setup 
 
+const readTimeout = 60
+const writeTimeout = 60
+const idleTimeout = 60
+const ctxTimeout = 60
+
 func envVariable(key string) string {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -110,9 +115,9 @@ func handleRequests(handler *hdl_http.HttpAdapter) {
 	s := http.Server{
 		Addr:         ":" + my_pod.Port,      	
 		Handler:      myRouter,                	          
-		ReadTimeout:  time.Duration(60) * time.Second,   
-		WriteTimeout: time.Duration(60) * time.Second,  
-		IdleTimeout:  time.Duration(60) * time.Second, 
+		ReadTimeout:  time.Duration(readTimeout) * time.Second,   
+		WriteTimeout: time.Duration(writeTimeout) * time.Second,  
+		IdleTimeout:  time.Duration(idleTimeout) * time.Second, 
 	}
 
 	go func() {
@@ -129,7 +134,7 @@ func handleRequests(handler *hdl_http.HttpAdapter) {
 
 	log.Println("-> Stopping initialized")
 
-	ctx , cancel := context.WithTimeout(context.Background(), time.Duration(60) * time.Second)
+	ctx , cancel := context.WithTimeout(context.Background(), time.Duration(ctxTimeout) * time.Second)
 	defer cancel()
 
 	log.Println("--> Stopping gRPC server")
