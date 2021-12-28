@@ -75,7 +75,7 @@ func get_data(host_url string, client http.Client){
 
 	req_get.Header = http.Header{
 		"Accept_Language": []string{"pt-BR"},
-		"Authorization": []string{"Bearer cookie"},
+		"jwt": []string{"cookie"},
 	}
 
 	req_get.Close = true
@@ -86,7 +86,6 @@ func get_data(host_url string, client http.Client){
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		log.Println("Error : ", err)
 		panic(err)
@@ -120,7 +119,7 @@ func post_data(i int ,host string, client http.Client){
 
 	req_post.Header = http.Header{
 		"Accept_Language": []string{"pt-BR"},
-		"Authorization": []string{"Bearer cookie"},
+		"jwt": []string{"cookie"},
 		"Content-Type": []string{"application/json"},
 	}
 
@@ -130,6 +129,8 @@ func post_data(i int ,host string, client http.Client){
 	   panic(err)
 	}
 
+	log.Println("StatusCode : ", resp.StatusCode )
+	
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {

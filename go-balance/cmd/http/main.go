@@ -71,28 +71,6 @@ func initSetup(){
 	my_pod.Setup = my_setup
 }
 
-func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	log.Printf("Starting Http Server 1.0")
-
-	initSetup()
-
-	handler_cliente	:= client.NewGrpcAdapterClient()
-	repo 			:= repository.NewMemKV()
-	service 		:= core.NewService(repo, handler_cliente)
-	handler			:= hdl_http.NewHttpAdapter(service)
-	
-	//------------------------------------
-	//Load dummy data
-	for i:=0 ; i < 50; i++ {
-		b := dummy_data.NewBalance(i)
-		service.AddBalance(b)
-	}
-	//------------------------------------
-	
-	handleRequests(handler)
-}
-
 func handleRequests(handler *hdl_http.HttpAdapter) {
 	myRouter := mux.NewRouter().StrictSlash(true)
 
@@ -103,14 +81,15 @@ func handleRequests(handler *hdl_http.HttpAdapter) {
 
 	add_balance := myRouter.Methods(http.MethodPost).Subrouter()
     add_balance.HandleFunc("/add_balance", handler.AddBalance)
+	add_balance.Use(hdl_http.MiddleWareHandler)
 
 	list_balance := myRouter.Methods(http.MethodGet).Subrouter()
     list_balance.HandleFunc("/list_balance", handler.ListBalance)
+	list_balance.Use(hdl_http.MiddleWareHandler)
 
 	get_balance := myRouter.Methods(http.MethodGet).Subrouter()
     get_balance.HandleFunc("/get_balance", handler.GetBalance).Queries("id", "{id}")
-
-	//list_balance.Use(MiddleWareHandler)
+	get_balance.Use(hdl_http.MiddleWareHandler)
 
 	s := http.Server{
 		Addr:         ":" + my_pod.Port,      	
@@ -143,4 +122,26 @@ func handleRequests(handler *hdl_http.HttpAdapter) {
 		return
 	}
 	log.Println("---> Stop DONE !!!")
+}
+
+func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Printf("Starting Http Server 1.0")
+
+	initSetup()
+
+	handler_cliente	:= client.NewGrpcAdapterClient()
+	repo 			:= repository.NewMemKV()
+	service 		:= core.NewService(repo, handler_cliente)
+	handler			:= hdl_http.NewHttpAdapter(service)
+	
+	//------------------------------------
+	//Load dummy data
+	for i:=0 ; i < 50; i++ {
+		b := dummy_data.NewBalance(i)
+		service.AddBalance(b)
+	}
+	//------------------------------------
+	
+	handleRequests(handler)
 }
