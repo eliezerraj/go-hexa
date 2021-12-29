@@ -16,9 +16,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/go-hexa/go-balance/dummy_data"
 	"github.com/go-hexa/go-balance/internal/handlers/hdl_grpc"
+	"github.com/go-hexa/go-balance/internal/healthcheck"
 	"github.com/go-hexa/go-balance/internal/core"
 	proto "github.com/go-hexa/proto-shared/generated/go/balance"
 	"github.com/go-hexa/go-balance/internal/adapters/repository"
@@ -123,6 +125,9 @@ func main() {
 
 	s := grpc.NewServer(opts...)
 	proto.RegisterBalanceServiceServer(s, handler)
+
+	healthService := healthcheck.NewHealthChecker()
+	grpc_health_v1.RegisterHealthServer(s, healthService)
 
 	go func(){
 		log.Println("Start Server...")

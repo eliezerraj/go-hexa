@@ -15,8 +15,9 @@ import(
 )
 
 const val_timeout = 3
-//const host =  "svc-go-rate-grpc:60051" 
-const host = "0.0.0.0:60051" //uso local
+const host =  "svc-go-rate-grpc:60051" 
+//const host =  "go_rate_grpc:60051" //uso  docker
+//const host = "0.0.0.0:60051" //uso local 
 
 type GrpcAdapterClient struct {
 	cliente core.BalanceClientPort
@@ -39,12 +40,15 @@ func (g *GrpcAdapterClient) GetRate(account string) (int32, error) {
     opts = append(opts, grpc.WithBlock())
 
 	cc, err := grpc.Dial(host, opts...)
-
 	if err != nil{
 		log.Printf("Failed to connect : %v", err)
 		return 1, err
 	}
-	defer cc.Close()
+	defer func() {
+		if err := cc.Close(); err != nil {
+			log.Printf("Failed to close gPRC connection: %s", err)
+		}
+	}()
 
 	c := proto.NewRateServiceClient(cc)
 

@@ -31,11 +31,11 @@ func main(){
 		}
 	})
 
-	var host = "0.0.0.0:" + *port
+	var host = "127.0.0.1:" + *port
 	
-	var DefaultConfig =backoff. Config{
+	var DefaultConfig = backoff.Config{
 		BaseDelay:  1.0 * time.Second,
-		Multiplier: 1.6,
+		Multiplier: 2.0,
 		MaxDelay:   120 * time.Second,
 	}
 
@@ -51,7 +51,11 @@ func main(){
 		log.Printf(" **** Failed to connect %v", err)
 		panic(err)
 	}
-	defer cc.Close()
+	defer func() {
+		if err := cc.Close(); err != nil {
+			log.Printf("Failed to close gPRC connection: %s", err)
+		}
+	}()
 
 	c := proto.NewBalanceServiceClient(cc)
 
@@ -87,7 +91,7 @@ func post(c proto.BalanceServiceClient, done chan string){
 			req := &proto.AddBalanceRequest {
 				Balance: &b,
 			}
-			AddBalance(c , req , 3 * time.Second)
+			AddBalance(c , req , 5 * time.Second)
 		}
 		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
@@ -165,6 +169,7 @@ func ListBalance(c proto.BalanceServiceClient, timeout time.Duration){
 
 func AddBalance(c proto.BalanceServiceClient, req *proto.AddBalanceRequest, timeout time.Duration){
 	fmt.Println("#### AddBalance")
+	
 	header := metadata.New(map[string]string{"accept_language": "pt-BR", "jwt":"cookie"})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout) 
 	ctx = metadata.NewOutgoingContext(ctx, header)

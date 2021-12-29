@@ -30,15 +30,15 @@ func main() {
 	done := make(chan string)
 
 	log.Println("-----------------------------")
-	log.Println("Goroutine - Load data")
+	log.Println("Goroutine - POST data")
 	go post(host, client, done)
-	log.Println("End Load data")
+	log.Println("End POST data")
 	log.Println("-----------------------------")
 
 	log.Println("-----------------------------")
-	log.Println("Goroutine - Reading Data")
+	log.Println("Goroutine - GET Data")
 	go get(host, client, done)
-	log.Println("End Reading Data")
+	log.Println("End GET Data")
 	log.Println("-----------------------------")
 
 	log.Println(<-done)
