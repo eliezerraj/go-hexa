@@ -121,7 +121,7 @@ func main() {
 
 	var opts []grpc.ServerOption
 	opts = append(opts, grpc.UnaryInterceptor(authInterceptor))
- 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * maxConnectionAge}))
+ 	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: time.Minute * maxConnectionAge})) // L4 proxies are configured to kill "idle" connections. Sending pings would make the connections not "idle"
 
 	s := grpc.NewServer(opts...)
 	proto.RegisterBalanceServiceServer(s, handler)

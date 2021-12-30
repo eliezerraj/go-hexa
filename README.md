@@ -9,3 +9,6 @@ wget https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.
 
 Testing healthcheck
 ./grpc_health_probe-linux-386 -addr=127.0.0.1:50051 -rpc-header=jwt:cookie
+
+https://istio.io/latest/docs/ops/configuration/mesh/app-health-check/
+https://github.com/grpc/grpc/blob/master/doc/health-checking.md
