@@ -24,7 +24,8 @@ func main() {
 		}
 	})
 
-	var host = "127.0.0.1:" + *port
+	var host = "a13602eb146cf4786af99f26bc7a9db8-2126738867.us-east-2.elb.amazonaws.com" + ":" + *port 
+	//var host = "127.0.0.1:" + *port
 	
 	client := http.Client{}
 	done := make(chan string)
@@ -58,6 +59,7 @@ func post(host string, client http.Client, done chan string){
 		for i:=0; i < 50; i++ {
 			host_url := "http://" + host + "/add_balance"
 			post_data(i, host_url, client)
+			time.Sleep(time.Millisecond * time.Duration(150))
 		}
 		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
@@ -80,6 +82,8 @@ func get_data(host_url string, client http.Client){
 
 	req_get.Close = true
 	resp, err := client.Do(req_get)
+	defer resp.Body.Close()
+
 	if err != nil {
 		log.Println("Error doing GET : ", err)
 		panic(err)
@@ -124,6 +128,7 @@ func post_data(i int ,host string, client http.Client){
 	}
 
 	resp, err := client.Do(req_post)
+	defer resp.Body.Close()
 	if err != nil {
 	   log.Println("Error doing POST : ", err)
 	   panic(err)

@@ -35,6 +35,7 @@ func post(c proto.BalanceServiceClient, done chan string){
 				Balance: &b,
 			}
 			AddBalance(c , req , 5 * time.Second)
+			time.Sleep(time.Millisecond * time.Duration(150))
 		}
 		time.Sleep(time.Millisecond * time.Duration(1000))
 	}
@@ -148,7 +149,9 @@ func main(){
 		}
 	})
 
-	var host = "127.0.0.1:" + *port
+	
+	var host = "ab655792e16a141868d56d85738e3d22-1334957434.us-east-2.elb.amazonaws.com" + ":" + *port
+	//var host = "127.0.0.1:" + *port
 	
 	// var DefaultConfig = backoff.Config{
 	// 	BaseDelay:  1.0 * time.Second,
@@ -193,7 +196,7 @@ func main(){
 
 	log.Println("-----------------------------")
 	log.Println("Goroutine - Get Data")
-	//go get(c, done)
+	go get(c, done)
 	log.Println("End Reading Data")
 	log.Println("-----------------------------")
 
